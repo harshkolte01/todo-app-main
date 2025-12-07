@@ -31,8 +31,12 @@ const Auth = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    profilePic: null
   });
+  
+  // Preview URL for profile picture
+  const [previewUrl, setPreviewUrl] = useState(null);
   
   // Error states
   const [errors, setErrors] = useState({});
@@ -82,6 +86,34 @@ const Auth = () => {
     }
   };
 
+  // Handle profile picture selection
+  const handleProfilePicChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setErrors({ ...errors, profilePic: 'Please select an image file' });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors({ ...errors, profilePic: 'Image size should be less than 5MB' });
+        return;
+      }
+      
+      setSignUpData({ ...signUpData, profilePic: file });
+      setErrors({ ...errors, profilePic: null });
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   // Handle Sign Up form submission
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -112,6 +144,11 @@ const Auth = () => {
     formData.append('email', signUpData.email);
     formData.append('password', signUpData.password);
     
+    // Add profile picture if selected
+    if (signUpData.profilePic) {
+      formData.append('profile_pic', signUpData.profilePic);
+    }
+    
     // Call authService
     const result = await authService.signup(formData);
     
@@ -121,7 +158,8 @@ const Auth = () => {
       // Show success message and switch to sign in
       alert('Account created successfully! Please sign in.');
       setIsSignIn(true);
-      setSignUpData({ username: '', email: '', password: '', confirmPassword: '' });
+      setSignUpData({ username: '', email: '', password: '', confirmPassword: '', profilePic: null });
+      setPreviewUrl(null);
     } else {
       setErrors({ general: result.error || 'Sign up failed' });
     }
@@ -264,9 +302,50 @@ const Auth = () => {
                   required
                 />
                 
-                <Button 
-                  type="submit" 
-                  variant="primary" 
+                {/* Profile Picture Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Profile Picture (Optional)
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {/* Preview */}
+                    {previewUrl && (
+                      <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300">
+                        <img
+                          src={previewUrl}
+                          alt="Profile preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* File Input */}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfilePicChange}
+                        className="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-blue-50 file:text-blue-700
+                          hover:file:bg-blue-100
+                          cursor-pointer"
+                      />
+                      {errors.profilePic && (
+                        <p className="mt-1 text-sm text-red-600">{errors.profilePic}</p>
+                      )}
+                      <p className="mt-1 text-xs text-gray-500">
+                        PNG, JPG, GIF up to 5MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button
+                  type="submit"
+                  variant="primary"
                   disabled={isLoading}
                   className="w-full"
                 >
