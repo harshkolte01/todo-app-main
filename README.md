@@ -290,6 +290,62 @@ This project helps practice:
 
 ---
 
+## 🚀 Deployment
+
+### Deploying Backend to Render
+
+Since your backend is in the `backend` directory, configure Render as follows:
+
+#### Render Configuration
+
+1. **Root Directory:** `backend`
+   - This tells Render to run commands from the backend directory
+
+2. **Build Command:**
+   ```bash
+   npm install
+   ```
+
+3. **Start Command:**
+   ```bash
+   npm start
+   ```
+
+#### Environment Variables on Render
+
+Add all required environment variables in Render's dashboard:
+```
+PORT=5000
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET_KEY=your_secret_key
+JWT_EXPIRY=7d
+PASSWORD_SALT_ROUNDS=10
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+GOOGLE_EMAIL=your_email@gmail.com
+GOOGLE_APP_PASSWORD=your_app_password
+```
+
+#### Important Notes
+- Use MongoDB Atlas (cloud) instead of local MongoDB
+- Update frontend `.env` with your Render backend URL:
+  ```env
+  VITE_API_URL=https://your-app-name.onrender.com/api
+  ```
+- Render will auto-deploy when you push changes to the `backend` directory
+
+### Deploying Frontend
+
+The frontend can be deployed to:
+- **Vercel:** Automatic deployment from GitHub
+- **Netlify:** Drag and drop or GitHub integration
+- **Render:** Static site deployment
+
+For any platform, ensure you set the `VITE_API_URL` environment variable to your deployed backend URL.
+
+---
+
 ## 🛠️ Development Tips
 
 1. **Backend Development:**
