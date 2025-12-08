@@ -156,20 +156,42 @@ const Auth = () => {
       formData.append('profile_pic', signUpData.profilePic);
     }
     
-    // Call authService
-    const result = await authService.signup(formData);
+    // Call authService to signup
+    const signupResult = await authService.signup(formData);
+    
+    if (signupResult.success) {
+      // Automatically sign in the user after successful signup
+      const signinResult = await authService.signin({
+        email: signUpData.email,
+        password: signUpData.password
+      });
+      
+      if (signinResult.success) {
+        // Get user profile
+        const profileResult = await authService.getProfile();
+        
+        if (profileResult.success) {
+          // Update auth context
+          login(signinResult.data.token, profileResult.data.user);
+          showSuccess('Account created successfully! Welcome aboard!');
+          // Redirect to todos page
+          window.location.href = '/todos';
+        } else {
+          setErrors({ general: 'Account created but failed to load profile. Please sign in.' });
+          setIsSignIn(true);
+        }
+      } else {
+        // Signup succeeded but signin failed, ask user to sign in manually
+        showSuccess('Account created successfully! Please sign in.');
+        setIsSignIn(true);
+        setSignUpData({ username: '', email: '', password: '', confirmPassword: '', profilePic: null });
+        setPreviewUrl(null);
+      }
+    } else {
+      setErrors({ general: signupResult.error || 'Sign up failed' });
+    }
     
     setIsLoading(false);
-    
-    if (result.success) {
-      // Show success message and switch to sign in
-      alert('Account created successfully! Please sign in.');
-      setIsSignIn(true);
-      setSignUpData({ username: '', email: '', password: '', confirmPassword: '', profilePic: null });
-      setPreviewUrl(null);
-    } else {
-      setErrors({ general: result.error || 'Sign up failed' });
-    }
   };
 
   // Show loading state while checking authentication
