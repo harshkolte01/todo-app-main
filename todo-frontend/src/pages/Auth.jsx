@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Input } from '../components/ui';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -14,8 +14,15 @@ import { useToast } from '../context/ToastContext';
  */
 
 const Auth = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const { showSuccess, showError } = useToast();
+
+  // Redirect authenticated users to todos page
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      window.location.href = '/todos';
+    }
+  }, [isAuthenticated, authLoading]);
   
   // Toggle between signin and signup
   const [isSignIn, setIsSignIn] = useState(true);
@@ -164,6 +171,23 @@ const Auth = () => {
       setErrors({ general: result.error || 'Sign up failed' });
     }
   };
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If authenticated, don't render auth form (redirect will happen)
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

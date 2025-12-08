@@ -83,7 +83,7 @@ const Todos = () => {
       setTodos(result.data.todos);
       setPagination(result.data.pagination);
     } else {
-      console.error('Error fetching todos:', result.error);
+      // console.error('Error fetching todos:', result.error);
       showError(result.error || 'Failed to fetch todos');
     }
   };
@@ -100,7 +100,7 @@ const Todos = () => {
       showSuccess('Todo created successfully!');
       fetchTodos(); // Refresh list
     } else {
-      console.error('Error creating todo:', result.error);
+      // console.error('Error creating todo:', result.error);
       showError(result.error || 'Failed to create todo');
     }
   };
@@ -115,7 +115,7 @@ const Todos = () => {
       showSuccess('Todo deleted successfully!');
       fetchTodos(); // Refresh list
     } else {
-      console.error('Error deleting todo:', result.error);
+      // console.error('Error deleting todo:', result.error);
       showError(result.error || 'Failed to delete todo');
     }
   };
@@ -129,7 +129,7 @@ const Todos = () => {
       showSuccess(`Todo marked as ${newStatus}!`);
       fetchTodos(); // Refresh list
     } else {
-      console.error('Error updating todo:', result.error);
+      // console.error('Error updating todo:', result.error);
       showError(result.error || 'Failed to update todo');
     }
   };
@@ -160,7 +160,7 @@ const Todos = () => {
       showSuccess('Todo updated successfully!');
       fetchTodos(); // Refresh list
     } else {
-      console.error('Error updating todo:', result.error);
+      // console.error('Error updating todo:', result.error);
       showError(result.error || 'Failed to update todo');
     }
   };
@@ -178,6 +178,20 @@ const Todos = () => {
     setSearchQuery('');
     setPagination({ ...pagination, currentPage: 1 });
   };
+
+  // Clear all filters, search, and sort
+  const handleClearAllFilters = () => {
+    setSearchInput('');
+    setSearchQuery('');
+    setStatusFilter('');
+    setPriorityFilter('');
+    setSortBy('createdAt');
+    setSortOrder('desc');
+    setPagination({ ...pagination, currentPage: 1 });
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = searchQuery || statusFilter || priorityFilter || sortBy !== 'createdAt' || sortOrder !== 'desc';
 
   // Handle logout
   const handleLogout = () => {
@@ -208,6 +222,21 @@ const Todos = () => {
 
         {/* Filters and Search */}
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          {/* Clear All Filters Button */}
+          {hasActiveFilters && (
+            <div className="mb-4 flex justify-end">
+              <button
+                onClick={handleClearAllFilters}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Clear All Filters
+              </button>
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             
             {/* Search with button */}
@@ -287,10 +316,28 @@ const Todos = () => {
           </div>
         ) : todos.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <p className="text-gray-600 mb-4">No todos found</p>
-            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-              Create Your First Todo
-            </Button>
+            {/* Show different messages based on whether filters are active */}
+            {searchQuery || statusFilter || priorityFilter ? (
+              // Filters are active, so no results found
+              <div>
+                <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <p className="text-gray-600 text-lg font-medium mb-2">No todos found</p>
+                <p className="text-gray-500 text-sm">Try adjusting your search or filters</p>
+              </div>
+            ) : (
+              // No filters active, user has no todos at all
+              <div>
+                <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <p className="text-gray-600 text-lg font-medium mb-4">No todos yet</p>
+                <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+                  Create Your First Todo
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-4">

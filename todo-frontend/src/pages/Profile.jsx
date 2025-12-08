@@ -176,7 +176,14 @@ const Profile = () => {
               <h2 className="text-2xl font-bold text-gray-900">{user?.username}</h2>
               <p className="text-gray-600">{user?.email}</p>
               <p className="text-sm text-gray-500 mt-1">
-                Member since {new Date(user?.createdAt).toLocaleDateString()}
+                Member since {user?.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })
+                  : 'N/A'
+                }
               </p>
             </div>
 

@@ -1,147 +1,85 @@
-# Todo App - Full Stack Practice Project
+# Todo App
 
-A full-stack todo application built for learning and practicing modern web development technologies. This project demonstrates user authentication, CRUD operations, file uploads, and responsive UI design.
+A full-stack todo application built with React and Node.js.
 
-## 🎯 Project Purpose
+## About the Project
 
-This is a **practice project** designed to learn and implement:
-- RESTful API development with Node.js and Express
-- MongoDB database operations with Mongoose
-- JWT-based authentication
-- File uploads with Cloudinary
-- React frontend with modern hooks and context API
-- Responsive UI with Tailwind CSS
+This is a simple todo management application where users can create, update, and delete their tasks. The app includes user authentication, profile management, and email notifications.
 
-## 🏗️ Architecture
+## Features
 
+### User Authentication
+- **Sign Up**: Create a new account with username, email, and password
+- **Sign In**: Login with email and password
+- **JWT Authentication**: Secure token-based authentication
+- **Profile Picture**: Upload profile picture during signup or update later
+
+### Profile Management
+- **View Profile**: See your username, email, and profile picture
+- **Update Profile**: Change username and profile picture
+- **Delete Account**: Permanently delete your account and all todos
+
+### Todo Operations
+- **Create Todo**: Add new tasks with title, description, priority, and due date
+- **Read Todos**: View all your todos with pagination
+- **Update Todo**: Edit todo details or mark as complete
+- **Delete Todo**: Remove todos you no longer need
+- **Search**: Find todos by title or description
+- **Filter**: Filter by status (pending/completed) or priority (low/medium/high)
+- **Sort**: Sort by date, priority, or title
+
+### Email Notifications
+- **Welcome Email**: Receive a welcome email when you sign up
+- **Powered by Nodemailer**: Automated email service using Gmail
+
+## Tech Stack
+
+**Frontend:**
+- React with Hooks
+- Tailwind CSS
+- Context API for state management
+
+**Backend:**
+- Node.js & Express
+- MongoDB with Mongoose
+- JWT for authentication
+- Cloudinary for image storage
+- Nodemailer for emails
+
+## API Endpoints
+
+### User Routes
 ```
-todo-app/
-├── backend/          # Node.js + Express API
-└── todo-frontend/    # React + Vite frontend
-```
-
----
-
-## 🔧 Backend Implementation
-
-### Tech Stack
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB with Mongoose ODM
-- **Authentication:** JWT (JSON Web Tokens)
-- **File Storage:** Cloudinary
-- **Email Service:** Nodemailer
-- **Password Hashing:** bcrypt
-
-### Key Features
-
-#### 1. **User Management**
-- User registration with email validation
-- Secure password hashing (bcrypt with 10 salt rounds)
-- JWT-based authentication (7-day token expiry)
-- Profile picture upload to Cloudinary
-- Profile update and account deletion
-- Welcome email on registration
-
-#### 2. **Todo Management**
-- Create, read, update, delete todos
-- Todo properties:
-  - Title (required)
-  - Description (optional)
-  - Status: `pending` | `completed`
-  - Priority: `low` | `medium` | `high`
-  - Due date (optional)
-- User-specific todos (users can only access their own)
-
-#### 3. **Advanced Features**
-- **Search:** Case-insensitive search in title and description
-- **Filtering:** By status and priority
-- **Sorting:** By createdAt, updatedAt, title, priority, or dueDate
-- **Pagination:** Default 5 items per page, customizable
-- **Validation:** Comprehensive input validation and error handling
-
-### API Endpoints
-
-#### Authentication
-```
-POST   /api/users/signup    - Register new user
-POST   /api/users/signin    - Login and get JWT token
-GET    /api/users/profile   - Get user profile (protected)
-PUT    /api/users/profile   - Update profile (protected)
-DELETE /api/users/account   - Delete account (protected)
+POST   /api/users/signup     - Register new user
+POST   /api/users/signin     - Login user
+GET    /api/users/profile    - Get user profile (protected)
+PUT    /api/users/profile    - Update profile (protected)
+DELETE /api/users/account    - Delete account (protected)
 ```
 
-#### Todos
+### Todo Routes
 ```
-POST   /api/todos           - Create todo (protected)
-GET    /api/todos           - Get all todos with filters (protected)
-GET    /api/todos/:id       - Get single todo (protected)
-PUT    /api/todos/:id       - Update todo (protected)
-DELETE /api/todos/:id       - Delete todo (protected)
-```
-
-### Database Models
-
-#### User Schema
-```javascript
-{
-  username: String (unique, 3-20 chars),
-  email: String (unique, lowercase),
-  password: String (hashed, min 6 chars),
-  profile_pic: String (Cloudinary URL),
-  createdAt: Date,
-  updatedAt: Date
-}
+POST   /api/todos            - Create new todo (protected)
+GET    /api/todos            - Get all todos with filters (protected)
+GET    /api/todos/:id        - Get single todo (protected)
+PUT    /api/todos/:id        - Update todo (protected)
+DELETE /api/todos/:id        - Delete todo (protected)
 ```
 
-#### Todo Schema
-```javascript
-{
-  title: String (required),
-  description: String,
-  status: String (pending/completed),
-  priority: String (low/medium/high),
-  dueDate: Date,
-  user: ObjectId (ref: User),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+**Query Parameters for GET /api/todos:**
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 5)
+- `search` - Search in title/description
+- `status` - Filter by pending/completed
+- `priority` - Filter by low/medium/high
+- `sortBy` - Sort field (createdAt, title, priority, dueDate)
+- `order` - Sort order (asc/desc)
 
-### Middleware
-
-1. **Authentication Middleware** ([`authMiddleware.js`](backend/middleware/authMiddleware.js))
-   - Verifies JWT tokens
-   - Attaches user info to request object
-   - Protects routes from unauthorized access
-
-2. **Todo Middleware** ([`todoMiddleware.js`](backend/middleware/todoMiddleware.js))
-   - Validates todo ownership
-   - Ensures users can only modify their own todos
-
-3. **Upload Middleware** ([`upload.js`](backend/middleware/upload.js))
-   - Handles multipart/form-data
-   - Configures Multer for file uploads
-
-### Configuration
-
-#### Required Environment Variables
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET_KEY=your_secret_key
-JWT_EXPIRY=7d
-PASSWORD_SALT_ROUNDS=10
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-GOOGLE_EMAIL=your_email@gmail.com
-GOOGLE_APP_PASSWORD=your_app_password
-```
+## Setup Instructions
 
 ### Backend Setup
 
-1. Navigate to backend directory:
+1. Navigate to backend folder:
 ```bash
 cd backend
 ```
@@ -151,43 +89,28 @@ cd backend
 npm install
 ```
 
-3. Create `.env` file with required variables (see above)
+3. Create `.env` file with:
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET_KEY=your_secret_key
+JWT_EXPIRY=7d
+PASSWORD_SALT_ROUNDS=10
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+GOOGLE_EMAIL=your_gmail@gmail.com
+GOOGLE_APP_PASSWORD=your_gmail_app_password
+```
 
-4. Start development server:
+4. Start server:
 ```bash
 npm run dev
 ```
 
-5. Start production server:
-```bash
-npm start
-```
-
-The API will be available at `http://localhost:5000`
-
----
-
-## 🎨 Frontend Overview
-
-### Tech Stack
-- **Framework:** React 19
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS 4
-- **State Management:** Context API (AuthContext, ToastContext)
-
-### Key Features
-- User authentication (signup/signin)
-- Protected routes
-- Todo CRUD operations
-- Search and filter functionality
-- Pagination
-- Profile management with picture upload
-- Responsive design
-- Toast notifications
-
 ### Frontend Setup
 
-1. Navigate to frontend directory:
+1. Navigate to frontend folder:
 ```bash
 cd todo-frontend
 ```
@@ -197,7 +120,7 @@ cd todo-frontend
 npm install
 ```
 
-3. Create `.env` file:
+3. Create `.env` file with:
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
@@ -207,175 +130,34 @@ VITE_API_URL=http://localhost:5000/api
 npm run dev
 ```
 
-5. Build for production:
-```bash
-npm run build
+## Project Structure
+
+```
+todo-app/
+├── backend/
+│   ├── config/          # Database, Cloudinary, Nodemailer config
+│   ├── controllers/     # Request handlers
+│   ├── middleware/      # Auth, validation middleware
+│   ├── models/          # MongoDB schemas
+│   ├── routes/          # API routes
+│   └── emails/          # Email templates
+└── todo-frontend/
+    ├── src/
+    │   ├── components/  # Reusable components
+    │   ├── context/     # Auth & Toast context
+    │   ├── pages/       # Page components
+    │   ├── services/    # API services
+    │   └── utils/       # Helper functions
+    └── public/
 ```
 
-The app will be available at `http://localhost:5173`
+## Developer
+
+Created by [Harsh Kolte](https://github.com/harshkolte01)
+
+- [GitHub](https://github.com/harshkolte01?tab=repositories)
+- [LinkedIn](https://www.linkedin.com/in/harsh-kolte-458978277/)
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local or Atlas)
-- Cloudinary account
-- Gmail account (for email service)
-
-### Full Setup
-
-1. **Clone the repository**
-```bash
-git clone <repository-url>
-cd todo-app
-```
-
-2. **Setup Backend**
-```bash
-cd backend
-npm install
-# Create .env file with required variables
-npm run dev
-```
-
-3. **Setup Frontend** (in new terminal)
-```bash
-cd todo-frontend
-npm install
-# Create .env file with API URL
-npm run dev
-```
-
-4. **Access the application**
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
-
----
-
-## 📚 Learning Outcomes
-
-This project helps practice:
-- Building RESTful APIs with Express
-- MongoDB schema design and relationships
-- JWT authentication implementation
-- File upload handling with Cloudinary
-- React hooks (useState, useEffect, useContext)
-- Context API for state management
-- Protected routes in React
-- API integration with fetch/axios
-- Form handling and validation
-- Responsive design with Tailwind CSS
-- Error handling on both frontend and backend
-
----
-
-## 📖 Documentation
-
-- **Backend API Documentation:** [`backend/BACKEND_README.md`](backend/BACKEND_README.md)
-- **Frontend Components:** [`todo-frontend/src/components/ui/USAGE_EXAMPLES.md`](todo-frontend/src/components/ui/USAGE_EXAMPLES.md)
-
----
-
-## 🔒 Security Features
-
-- Password hashing with bcrypt
-- JWT token-based authentication
-- Protected API routes
-- User-specific data access
-- Input validation and sanitization
-- CORS configuration
-- Environment variable protection
-
----
-
-## 🚀 Deployment
-
-### Deploying Backend to Render
-
-Since your backend is in the `backend` directory, configure Render as follows:
-
-#### Render Configuration
-
-1. **Root Directory:** `backend`
-   - This tells Render to run commands from the backend directory
-
-2. **Build Command:**
-   ```bash
-   npm install
-   ```
-
-3. **Start Command:**
-   ```bash
-   npm start
-   ```
-
-#### Environment Variables on Render
-
-Add all required environment variables in Render's dashboard:
-```
-PORT=5000
-MONGODB_URI=your_mongodb_atlas_connection_string
-JWT_SECRET_KEY=your_secret_key
-JWT_EXPIRY=7d
-PASSWORD_SALT_ROUNDS=10
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-GOOGLE_EMAIL=your_email@gmail.com
-GOOGLE_APP_PASSWORD=your_app_password
-```
-
-#### Important Notes
-- Use MongoDB Atlas (cloud) instead of local MongoDB
-- Update frontend `.env` with your Render backend URL:
-  ```env
-  VITE_API_URL=https://your-app-name.onrender.com/api
-  ```
-- Render will auto-deploy when you push changes to the `backend` directory
-
-### Deploying Frontend
-
-The frontend can be deployed to:
-- **Vercel:** Automatic deployment from GitHub
-- **Netlify:** Drag and drop or GitHub integration
-- **Render:** Static site deployment
-
-For any platform, ensure you set the `VITE_API_URL` environment variable to your deployed backend URL.
-
----
-
-## 🛠️ Development Tips
-
-1. **Backend Development:**
-   - Use Postman or Thunder Client to test API endpoints
-   - Check MongoDB Compass for database inspection
-   - Monitor console logs for debugging
-
-2. **Frontend Development:**
-   - Use React DevTools for component inspection
-   - Check browser console for errors
-   - Use Network tab to debug API calls
-
-3. **Common Issues:**
-   - Ensure MongoDB is running
-   - Verify environment variables are set correctly
-   - Check CORS settings if frontend can't connect to backend
-   - Ensure JWT token is included in protected requests
-
----
-
-## 📝 License
-
-This is a practice project for educational purposes.
-
----
-
-## 🤝 Contributing
-
-This is a personal practice project, but feel free to fork and experiment!
-
----
-
-**Happy Learning! 🚀**
+**Happy Coding! 🚀**

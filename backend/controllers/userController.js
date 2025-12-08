@@ -99,11 +99,12 @@ exports.getUserProfile = async (req, res, next) => {
     try {
         res.json({
             user: {
-
                 id: req.user._id,
                 username: req.user.username,
                 email: req.user.email,
-                profile_pic: req.user.profile_pic
+                profile_pic: req.user.profile_pic,
+                createdAt: req.user.createdAt,
+                updatedAt: req.user.updatedAt
             }
         });
     } catch (error) {
